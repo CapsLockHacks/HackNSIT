@@ -85,12 +85,12 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
     private final TextureView.SurfaceTextureListener mSurfaceTextureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture texture, int width, int height) {
-            //openCamera(width, height);
+            openCamera(width, height);
         }
 
         @Override
         public void onSurfaceTextureSizeChanged(SurfaceTexture texture, int width, int height) {
-            //configureTransform(width, height);
+            configureTransform(width, height);
         }
 
         @Override
@@ -111,17 +111,27 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
     private final CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
         @Override
         public void onOpened(CameraDevice camera) {
-
+            mCameraOpenCloseLock.release();
+            mCameraDevice = camera;
+            createCameraPreviewSession();
         }
 
         @Override
         public void onDisconnected(CameraDevice camera) {
-
+            mCameraOpenCloseLock.release();
+            camera.close();
+            mCameraDevice = null;
         }
 
         @Override
         public void onError(CameraDevice camera, int error) {
-
+            mCameraOpenCloseLock.release();
+            camera.close();
+            mCameraDevice = null;
+            Activity activity = getActivity();
+            if (null != activity) {
+                activity.finish();
+            }
         }
     };
     private HandlerThread mBackgroundThread;
@@ -131,7 +141,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
     private final ImageReader.OnImageAvailableListener mOnImageAvailableListener = new ImageReader.OnImageAvailableListener() {
         @Override
         public void onImageAvailable(ImageReader reader) {
-//            mBackgroundHandler.post()
+            mBackgroundHandler.post(new ImageSaver(reader.acquireNextImage(), mFile));
         }
     };
     private CaptureRequest.Builder mPreviewRequestBuilder;
@@ -264,6 +274,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
     @Override
     public void onResume() {
         super.onResume();
+        startBackgroundThread();
         if (mTextureView.isAvailable())
             openCamera(mTextureView.getWidth(), mTextureView.getHeight());
         else
