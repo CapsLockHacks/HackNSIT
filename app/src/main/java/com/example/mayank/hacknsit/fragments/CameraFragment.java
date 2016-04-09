@@ -288,8 +288,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
                                            @NonNull int[] grantResults) {
         if (requestCode == REQUEST_CAMERA_PERMISSION) {
             if (grantResults.length != 1 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                ErrorDialog.newInstance(getString(R.string.request_permission))
-                        .show(getChildFragmentManager(), FRAGMENT_DIALOG);
+                ErrorDialog.newInstance("Request Permission").show(getChildFragmentManager(), FRAGMENT_DIALOG);
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -363,7 +362,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
                         }
                         break;
                     default:
-                        Log.e(TAG, "Display rotation is invalid: " + displayRotation);
+                        Log.e(this.getClass().getSimpleName(), "Display rotation is invalid: " + displayRotation);
                 }
 
                 Point displaySize = new Point();
@@ -415,8 +414,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
         } catch (CameraAccessException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            ErrorDialog.newInstance(getString(R.string.camera_error))
-                    .show(getChildFragmentManager(), FRAGMENT_DIALOG);
+            ErrorDialog.newInstance("Camera Error").show(getChildFragmentManager(), FRAGMENT_DIALOG);
         }
     }
     private void openCamera(int width, int height) {
