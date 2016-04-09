@@ -27,6 +27,7 @@ import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -44,6 +45,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.mayank.hacknsit.AutoFitTextureView;
+import com.example.mayank.hacknsit.MultipartPost;
+import com.example.mayank.hacknsit.PostParameter;
 import com.example.mayank.hacknsit.R;
 
 import java.io.File;
@@ -263,7 +266,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         view.findViewById(R.id.picture).setOnClickListener(this);
-        view.findViewById(R.id.info).setOnClickListener(this);
+        //view.findViewById(R.id.info).setOnClickListener(this);
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
     }
     @Override
@@ -634,7 +637,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
                     unlockFocus();
                 }
             };
-
             mCaptureSession.stopRepeating();
             mCaptureSession.capture(captureBuilder.build(), CaptureCallback, null);
         } catch (CameraAccessException e) {
@@ -690,6 +692,14 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
                         e.printStackTrace();
                     }
                 }
+            }
+            List<PostParameter> params = new ArrayList<>();
+            params.add(new PostParameter<File>("file", mFile));
+            MultipartPost post = new MultipartPost(params);
+            try {
+                Log.v(this.getClass().getSimpleName(), post.send("http://hacknsit.herokuapp.com/upload"));
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
