@@ -1,7 +1,7 @@
 package com.example.mayank.hacknsit.activities;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 import com.example.mayank.hacknsit.R;
 
@@ -14,5 +14,6 @@ public class MainActivity extends AppCompatActivity {
         if(savedInstanceState == null) {
             getFragmentManager().beginTransaction().replace(R.id.container, null).commit();
         }
+
     }
 }
