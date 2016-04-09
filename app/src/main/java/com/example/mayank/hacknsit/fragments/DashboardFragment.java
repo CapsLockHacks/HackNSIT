@@ -10,12 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.example.mayank.hacknsit.R;
 import com.example.mayank.hacknsit.adapter.FoodItemAdapter;
 import com.example.mayank.hacknsit.model.FeedItem;
+import com.melnykov.fab.FloatingActionButton;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -50,12 +52,22 @@ public class DashboardFragment extends android.app.Fragment {
         caloriesTv = (TextView) view.findViewById(R.id.calories);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getActivity().getApplicationContext(), "FAB clicked." , Toast.LENGTH_SHORT).show();
+            }
+        });
 
         foodItemAdapter = new FoodItemAdapter(feedItemList);
+
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(foodItemAdapter);
+
 
         fillTile();
 

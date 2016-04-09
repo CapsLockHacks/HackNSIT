@@ -35,5 +35,5 @@ dependencies {
     compile 'com.parse:parse-android:1.10.3'
     compile 'com.android.support:recyclerview-v7:23.1.1'
     compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
-
+    compile 'com.melnykov:floatingactionbutton:1.3.0'
 }

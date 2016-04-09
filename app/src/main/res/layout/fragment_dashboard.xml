@@ -86,11 +86,28 @@
         android:orientation="vertical"
         android:id="@+id/ll4">
 
+        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:fab="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scrollbars="vertical" />
+
+            <com.melnykov.fab.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="56dp"
+                android:layout_height="40dp"
+                android:layout_gravity="bottom|right"
+                android:layout_margin="16dp"
+                android:src="@raw/fab"
+                fab:fab_colorNormal="@color/blue_500"
+                fab:fab_colorPressed="@color/"
+                fab:fab_colorRipple="@color/ripple" />
+        </FrameLayout>
 
     </LinearLayout>
 

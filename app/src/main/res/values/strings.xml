@@ -75,5 +75,6 @@
     <string name="register">REGISTER!</string>
     <string name="calorie_tv_message">Calories in take for today -</string>
     <string name="Feed">Feed -</string>
+    <string name="calories_left_for_consumption">Calories you can consume -</string>
 
 </resources>
