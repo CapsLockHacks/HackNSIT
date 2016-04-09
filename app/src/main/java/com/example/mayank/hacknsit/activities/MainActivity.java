@@ -14,10 +14,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction().replace(R.id.container, CameraFragment.newInstance()).commit();
-        }
 
         ParseUser currentUser = ParseUser.getCurrentUser();
         if (currentUser == null) {
@@ -25,6 +21,13 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Log.i(TAG, currentUser.getUsername());
         }
+
+        setContentView(R.layout.activity_main);
+        if (savedInstanceState == null) {
+            getFragmentManager().beginTransaction().replace(R.id.container, CameraFragment.newInstance()).commit();
+        }
+
+
     }
 
     private void navigateToLogin() {
