@@ -18,6 +18,7 @@ android {
     }
     repositories {
         maven { url "https://jitpack.io" }
+        maven { url 'http://dl.bintray.com/amulyakhare/maven' }
     }
 }
 
@@ -33,4 +34,6 @@ dependencies {
     compile 'com.parse:parse-android:1.10.3'
     compile 'com.github.devlight.navigationtabbar:library:1.1.2'
     compile 'com.github.ybq:Android-SpinKit:1.0.2'
+    compile 'com.android.support:recyclerview-v7:23.1.1'
+    compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
 }

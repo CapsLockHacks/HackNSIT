@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="35dp"
         android:id="@+id/ll1"
+        android:padding="10dp"
         android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/profile_photo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_gravity="center"
             android:layout_weight="1" />
 
@@ -33,9 +34,10 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:id="@+id/ll2"
+        android:padding="10dp"
+        android:layout_below="@id/ll1"
         android:orientation="horizontal">
 
         <TextView
@@ -63,8 +65,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:id="@+id/ll3"
+        android:padding="10dp"
+        android:layout_below="@id/ll2"
         android:orientation="vertical">
 
         <TextView
@@ -82,10 +85,18 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
         android:orientation="vertical"
+        android:layout_below="@id/ll3"
+        android:padding="10dp"
         android:id="@+id/ll4">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:scrollbars="vertical"
+            android:layout_weight="1" />
 
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

@@ -22,14 +22,13 @@ import com.parse.SignUpCallback;
 public class SignupActivity extends Activity {
     EditText mUserName;
     EditText mPassword;
-    EditText mPhoneNumber;
+    EditText mFullName;
     Button mAlreadyRegistedButton;
-    Button mVerifyButton;
+    Button mSignupButton;
     String TAG = SignupActivity.class.getSimpleName();
-    String sinch_app_key = "4e3e31be-3c02-48d5-8ded-628cbc4a9b6d";
     String username;
     String password;
-    String phoneNumber;
+    String name;
     ProgressBar mProgressBar;
 
     @Override
@@ -40,8 +39,8 @@ public class SignupActivity extends Activity {
         mUserName = (EditText) findViewById(R.id.name);
         mPassword = (EditText) findViewById(R.id.password);
         mAlreadyRegistedButton = (Button) findViewById(R.id.btnLinkToLoginScreen);
-        mPhoneNumber = (EditText) findViewById(R.id.phoneNumber);
-        mVerifyButton = (Button) findViewById(R.id.verifyButton);
+        mFullName = (EditText) findViewById(R.id.name);
+        mSignupButton = (Button) findViewById(R.id.verifyButton);
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         mAlreadyRegistedButton.setOnClickListener(new View.OnClickListener() {
@@ -51,15 +50,16 @@ public class SignupActivity extends Activity {
                 startActivity(i);
             }
         });
-        mVerifyButton.setOnClickListener(new View.OnClickListener() {
+        mSignupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 username = mUserName.getText().toString();
                 password = mPassword.getText().toString();
-                phoneNumber = mPhoneNumber.getText().toString();
+                name = mFullName.getText().toString();
                 username = username.trim();
                 password = password.trim();
-                if (username.isEmpty() || password.isEmpty() || phoneNumber.isEmpty()) {
+                name = name.trim();
+                if (username.isEmpty() || password.isEmpty() || name.isEmpty()) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(SignupActivity.this);
                     builder.setMessage(R.string.signup_error_message);
                     builder.setTitle(R.string.signup_error_title);
@@ -67,7 +67,6 @@ public class SignupActivity extends Activity {
                     AlertDialog dialog = builder.create();
                     dialog.show();
                 } else {
-                    String number = "+91" + phoneNumber;
                     showProgressDialog();
                     startRegistration();
                 }
@@ -86,14 +85,12 @@ public class SignupActivity extends Activity {
     private void startRegistration() {
         setProgressBarIndeterminateVisibility(true);
         ParseUser newUser = new ParseUser();
-        Log.d(TAG, "Username : " + phoneNumber);
+        Log.d(TAG, "Username : " + username);
         Log.d(TAG, "Full Name : " + username);
         Log.d(TAG, "Password : " + password);
-        Log.d(TAG, "Phone Number : " + phoneNumber);
         newUser.setUsername(username);
         newUser.put("Full_Name", username);
         newUser.setPassword(password);
-        newUser.put("Phone_Number", phoneNumber);
         showProgressDialog();
         newUser.signUpInBackground(new SignUpCallback() {
             @Override
