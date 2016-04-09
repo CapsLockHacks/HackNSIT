@@ -73,5 +73,7 @@
     <string name="go_to_verification_btn_text">NEXT</string>
     <string name="verify_button">VERIFY NUMBER</string>
     <string name="register">REGISTER!</string>
+    <string name="calorie_tv_message">Calories in take for today -</string>
+    <string name="Feed">Feed -</string>
 
 </resources>
