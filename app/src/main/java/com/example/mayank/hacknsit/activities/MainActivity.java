@@ -7,7 +7,6 @@ import com.example.mayank.hacknsit.R;
 import com.example.mayank.hacknsit.fragments.CameraFragment;
 
 public class MainActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
