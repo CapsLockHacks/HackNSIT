@@ -298,7 +298,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.v(this.getClass().getSimpleName(), Environment.getExternalStorageDirectory().getAbsolutePath());
-        mFile = new File(getActivity().getExternalFilesDir(null) , "pic.jpg");
+        mFile = new File("/storage/emulated/0/Download/", "pic.jpg");
     }
     @Override
     public void onResume() {
@@ -637,7 +637,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
                                                @NonNull TotalCaptureResult result) {
                     showToast("Saved: " + mFile);
                     Log.d(this.getClass().getSimpleName(), mFile.toString());
-                    new AsyncTask<Void, Void, Void>() {
+                    /*new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected void onPreExecute() {
                             getActivity().runOnUiThread(new Runnable() {
@@ -649,11 +649,13 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
                         }
                         @Override
                         protected Void doInBackground(Void... params1) {
-                            Bitmap bmp = BitmapFactory.decodeFile(mFile.getPath());
-                            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                            bmp.compress(Bitmap.CompressFormat.JPEG, 70, bos);
+                            Bitmap original = BitmapFactory.decodeFile(mFile.getPath());
+                            ByteArrayOutputStream out = new ByteArrayOutputStream();
+                            original.compress(Bitmap.CompressFormat.JPEG, 10, out);
+                            Bitmap decoded = BitmapFactory.decodeStream(new ByteArrayInputStream(out.toByteArray()));
+
                             List<PostParameter> params = new ArrayList<>();
-                            params.add(new PostParameter<File>("file", mFile));
+                            params.add(new PostParameter<>("file", mFile));
                             MultipartPost post = new MultipartPost(params);
                             try {
                                 Log.v(this.getClass().getSimpleName(), post.send("http://hacknsit.herokuapp.com/upload"));
@@ -677,7 +679,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
                                 }
                             });
                         }
-                    }.execute();
+                    }.execute();*/
                     Log.v(this.getClass().getSimpleName(), "Image is now available");
                     unlockFocus();
                 }
@@ -728,6 +730,8 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
                 output.write(bytes);
             } catch (IOException e) {
                 e.printStackTrace();
+                if(mLoadingSpinner.getVisibility() == View.VISIBLE)
+                    mLoadingSpinner.setVisibility(View.INVISIBLE);
             } finally {
                 mImage.close();
                 if (null != output) {
@@ -737,15 +741,49 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
                         e.printStackTrace();
                     }
                 }
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected void onPreExecute() {
+                        /*getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mLoadingSpinner.setVisibility(View.VISIBLE);
+                            }
+                        });*/
+                    }
+                    @Override
+                    protected Void doInBackground(Void... params1) {
+                        Bitmap original = BitmapFactory.decodeFile(mFile.getPath());
+                        ByteArrayOutputStream out = new ByteArrayOutputStream();
+                        original.compress(Bitmap.CompressFormat.JPEG, 10, out);
+                        Bitmap decoded = BitmapFactory.decodeStream(new ByteArrayInputStream(out.toByteArray()));
+                        List<PostParameter> params = new ArrayList<>();
+                        params.add(new PostParameter<>("file", mFile));
+                        MultipartPost post = new MultipartPost(params);
+                        try {
+                            Log.v(this.getClass().getSimpleName(), post.send("http://hacknsit.herokuapp.com/upload"));
+                        } catch (Exception e) {
+                            /*getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mLoadingSpinner.setVisibility(View.INVISIBLE);/////////
+                                }
+                            });*/
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+                    @Override
+                    protected void onPostExecute(Void paramas) {
+                        /*getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mLoadingSpinner.setVisibility(View.VISIBLE);
+                            }
+                        });*/
+                    }
+                }.execute();
             }
-            /*List<PostParameter> params = new ArrayList<>();
-            params.add(new PostParameter<File>("file", mFile));
-            MultipartPost post = new MultipartPost(params);
-            try {
-                Log.v(this.getClass().getSimpleName(), post.send("http://hacknsit.herokuapp.com/upload"));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }*/
         }
     }
     static class CompareSizesByArea implements Comparator<Size> {
