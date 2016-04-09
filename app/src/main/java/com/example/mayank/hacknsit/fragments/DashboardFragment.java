@@ -13,19 +13,17 @@ import com.example.mayank.hacknsit.R;
  */
 public class DashboardFragment extends android.app.Fragment {
 
+    public static DashboardFragment newInstance() {
+        return new DashboardFragment();
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
-
-
-
         return view ;
     }
 }

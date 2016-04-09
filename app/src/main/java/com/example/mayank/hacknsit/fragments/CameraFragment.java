@@ -42,12 +42,15 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.mayank.hacknsit.AutoFitTextureView;
 import com.example.mayank.hacknsit.MultipartPost;
 import com.example.mayank.hacknsit.PostParameter;
 import com.example.mayank.hacknsit.R;
+import com.github.ybq.android.spinkit.SpinKitView;
+import com.github.ybq.android.spinkit.style.DoubleBounce;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -152,6 +155,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
     private int mState = STATE_PREVIEW;
     private Semaphore mCameraOpenCloseLock = new Semaphore(1);
     private boolean mFlashSupported;
+    public static SpinKitView mLoadingSpinner;
     private CameraCaptureSession.CaptureCallback mCaptureCallback = new CameraCaptureSession.CaptureCallback() {
         private void process(CaptureResult result) {
             switch (mState) {
@@ -165,7 +169,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
                         captureStillPicture();
                     } else if (CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED == afState ||
                             CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED == afState) {
-                        // CONTROL_AE_STATE can be null on some devices
                         Integer aeState = result.get(CaptureResult.CONTROL_AE_STATE);
                         if (aeState == null ||
                                 aeState == CaptureResult.CONTROL_AE_STATE_CONVERGED) {
@@ -266,8 +269,18 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         view.findViewById(R.id.picture).setOnClickListener(this);
-        //view.findViewById(R.id.info).setOnClickListener(this);
+        mLoadingSpinner = (SpinKitView) view.findViewById(R.id.loading);
+        mLoadingSpinner.setVisibility(View.INVISIBLE);
+        mLoadingSpinner.setIndeterminateDrawable(new DoubleBounce());
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
+        ImageButton dashBoard = (ImageButton) view.findViewById(R.id.dashboard);
+        dashBoard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getFragmentManager().beginTransaction().replace(R.id.container, DashboardFragment.newInstance()).commit();
+                Log.v(this.getClass().getSimpleName(), "Changing Fragment");
+            }
+        });
     }
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -315,16 +328,9 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
                 takePicture();
                 break;
             }
-            case R.id.info: {
-                Activity activity = getActivity();
-                if (null != activity) {
-                    new AlertDialog.Builder(activity)
-                            .setMessage("")
-                            .setPositiveButton(android.R.string.ok, null)
-                            .show();
-                }
+            /*case R.id.dashboard: {
                 break;
-            }
+            }*/
         }
     }
     private void setUpCameraOutputs(int width, int height) {
@@ -400,15 +406,9 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
                 if (maxPreviewHeight > MAX_PREVIEW_HEIGHT) {
                     maxPreviewHeight = MAX_PREVIEW_HEIGHT;
                 }
-
-                // Danger, W.R.! Attempting to use too large a preview size could  exceed the camera
-                // bus' bandwidth limitation, resulting in gorgeous previews but the storage of
-                // garbage capture data.
                 mPreviewSize = chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class),
                         rotatedPreviewWidth, rotatedPreviewHeight, maxPreviewWidth,
                         maxPreviewHeight, largest);
-
-                // We fit the aspect ratio of TextureView to the size of preview we picked.
                 int orientation = getResources().getConfiguration().orientation;
                 if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
                     mTextureView.setAspectRatio(
@@ -417,8 +417,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
                     mTextureView.setAspectRatio(
                             mPreviewSize.getHeight(), mPreviewSize.getWidth());
                 }
-
-                // Check if the flash is supported.
                 Boolean available = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
                 mFlashSupported = available == null ? false : available;
 
@@ -639,6 +637,28 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
             };
             mCaptureSession.stopRepeating();
             mCaptureSession.capture(captureBuilder.build(), CaptureCallback, null);
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected void onPreExecute() {
+                    mLoadingSpinner.setVisibility(View.VISIBLE);
+                }
+                @Override
+                protected Void doInBackground(Void... params1) {
+                    List<PostParameter> params = new ArrayList<>();
+                    params.add(new PostParameter<File>("file", mFile));
+                    MultipartPost post = new MultipartPost(params);
+                    try {
+                        Log.v(this.getClass().getSimpleName(), post.send("http://hacknsit.herokuapp.com/upload"));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }
+                @Override
+                protected void onPostExecute(Void paramas) {
+                    mLoadingSpinner.setVisibility(View.INVISIBLE);
+                }
+            }.execute();
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
@@ -692,14 +712,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
                         e.printStackTrace();
                     }
                 }
-            }
-            List<PostParameter> params = new ArrayList<>();
-            params.add(new PostParameter<File>("file", mFile));
-            MultipartPost post = new MultipartPost(params);
-            try {
-                Log.v(this.getClass().getSimpleName(), post.send("http://hacknsit.herokuapp.com/upload"));
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
     }

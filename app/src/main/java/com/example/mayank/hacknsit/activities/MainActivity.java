@@ -10,9 +10,7 @@ import com.example.mayank.hacknsit.fragments.CameraFragment;
 import com.parse.ParseUser;
 
 public class MainActivity extends AppCompatActivity {
-
     public static final String TAG = MainActivity.class.getSimpleName();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
