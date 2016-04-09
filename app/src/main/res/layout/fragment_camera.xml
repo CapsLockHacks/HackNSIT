@@ -40,6 +40,11 @@
                 android:layout_gravity="center" />
         </LinearLayout>
     </FrameLayout>
+    <ImageView
+        android:background="#000000"
+        android:id="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
     <com.github.ybq.android.spinkit.SpinKitView
         android:id="@+id/loading"
         android:layout_centerInParent="true"

@@ -33,4 +33,5 @@ dependencies {
     compile 'com.parse:parse-android:1.10.3'
     compile 'com.github.devlight.navigationtabbar:library:1.1.2'
     compile 'com.github.ybq:Android-SpinKit:1.0.2'
+    compile 'com.squareup.picasso:picasso:2.5.2'
 }
