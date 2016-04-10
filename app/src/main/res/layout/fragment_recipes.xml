@@ -14,6 +14,23 @@
         android:gravity="center"
         android:text="@string/calories_left_for_consumption"/>
 
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:textSize="20sp"
+        android:layout_marginTop="30dp"
+        android:id="@+id/calories_for_recipe"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="Find recipes!"
+        android:id="@+id/find_recipes_button"
+        android:layout_below="@+id/calories_left_tv"
+        android:layout_centerHorizontal="true" />
+
     <ListView
         android:id="@+id/list"
         android:layout_width="wrap_content"

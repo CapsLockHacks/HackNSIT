@@ -102,16 +102,7 @@
             android:scrollbars="vertical"
             android:layout_weight="1" />
 
-            <com.melnykov.fab.FloatingActionButton
-                android:id="@+id/fab"
-                android:layout_width="56dp"
-                android:layout_height="40dp"
-                android:layout_gravity="bottom|right"
-                android:layout_margin="16dp"
-                android:src="@raw/fab"
-                fab:fab_colorNormal="@color/blue_500"
-                fab:fab_colorPressed="@color/"
-                fab:fab_colorRipple="@color/ripple" />
+
         </FrameLayout>
 
     </LinearLayout>
