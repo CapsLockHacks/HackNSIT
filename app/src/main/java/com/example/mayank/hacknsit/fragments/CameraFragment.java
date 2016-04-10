@@ -10,6 +10,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Point;
@@ -27,7 +29,10 @@ import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
@@ -41,14 +46,24 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.mayank.hacknsit.AutoFitTextureView;
+import com.example.mayank.hacknsit.MultipartPost;
+import com.example.mayank.hacknsit.PostParameter;
 import com.example.mayank.hacknsit.R;
+import com.github.ybq.android.spinkit.SpinKitView;
+import com.github.ybq.android.spinkit.style.DoubleBounce;
+import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -149,6 +164,8 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
     private int mState = STATE_PREVIEW;
     private Semaphore mCameraOpenCloseLock = new Semaphore(1);
     private boolean mFlashSupported;
+    public static SpinKitView mLoadingSpinner;
+    public static ImageView imageView;
     private CameraCaptureSession.CaptureCallback mCaptureCallback = new CameraCaptureSession.CaptureCallback() {
         private void process(CaptureResult result) {
             switch (mState) {
@@ -162,7 +179,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
                         captureStillPicture();
                     } else if (CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED == afState ||
                             CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED == afState) {
-                        // CONTROL_AE_STATE can be null on some devices
                         Integer aeState = result.get(CaptureResult.CONTROL_AE_STATE);
                         if (aeState == null ||
                                 aeState == CaptureResult.CONTROL_AE_STATE_CONVERGED) {
@@ -263,13 +279,26 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         view.findViewById(R.id.picture).setOnClickListener(this);
-        view.findViewById(R.id.info).setOnClickListener(this);
+        mLoadingSpinner = (SpinKitView) view.findViewById(R.id.loading);
+        mLoadingSpinner.setVisibility(View.INVISIBLE);
+        mLoadingSpinner.setIndeterminateDrawable(new DoubleBounce());
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
+        ImageButton dashBoard = (ImageButton) view.findViewById(R.id.dashboard);
+        dashBoard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getFragmentManager().beginTransaction().replace(R.id.container, DashboardFragment.newInstance()).commit();
+                Log.v(this.getClass().getSimpleName(), "Changing Fragment");
+            }
+        });
+        imageView = (ImageView) view.findViewById(R.id.image);
+        imageView.setVisibility(View.INVISIBLE);
     }
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFile = new File(getActivity().getExternalFilesDir(null), "pic.jpg");
+        Log.v(this.getClass().getSimpleName(), Environment.getExternalStorageDirectory().getAbsolutePath());
+        mFile = new File("/storage/emulated/0/Download/", "pic.jpg");
     }
     @Override
     public void onResume() {
@@ -312,16 +341,9 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
                 takePicture();
                 break;
             }
-            case R.id.info: {
-                Activity activity = getActivity();
-                if (null != activity) {
-                    new AlertDialog.Builder(activity)
-                            .setMessage("")
-                            .setPositiveButton(android.R.string.ok, null)
-                            .show();
-                }
+            /*case R.id.dashboard: {
                 break;
-            }
+            }*/
         }
     }
     private void setUpCameraOutputs(int width, int height) {
@@ -397,15 +419,9 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
                 if (maxPreviewHeight > MAX_PREVIEW_HEIGHT) {
                     maxPreviewHeight = MAX_PREVIEW_HEIGHT;
                 }
-
-                // Danger, W.R.! Attempting to use too large a preview size could  exceed the camera
-                // bus' bandwidth limitation, resulting in gorgeous previews but the storage of
-                // garbage capture data.
                 mPreviewSize = chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class),
                         rotatedPreviewWidth, rotatedPreviewHeight, maxPreviewWidth,
                         maxPreviewHeight, largest);
-
-                // We fit the aspect ratio of TextureView to the size of preview we picked.
                 int orientation = getResources().getConfiguration().orientation;
                 if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
                     mTextureView.setAspectRatio(
@@ -414,8 +430,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
                     mTextureView.setAspectRatio(
                             mPreviewSize.getHeight(), mPreviewSize.getWidth());
                 }
-
-                // Check if the flash is supported.
                 Boolean available = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
                 mFlashSupported = available == null ? false : available;
 
@@ -605,36 +619,71 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
     private void captureStillPicture() {
         try {
             final Activity activity = getActivity();
-            if (null == activity || null == mCameraDevice) {
+            if (null == activity || null == mCameraDevice)
                 return;
-            }
-            // This is the CaptureRequest.Builder that we use to take a picture.
             final CaptureRequest.Builder captureBuilder =
                     mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
             captureBuilder.addTarget(mImageReader.getSurface());
-
-            // Use the same AE and AF modes as the preview.
             captureBuilder.set(CaptureRequest.CONTROL_AF_MODE,
                     CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
             setAutoFlash(captureBuilder);
-
-            // Orientation
             int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
-
             CameraCaptureSession.CaptureCallback CaptureCallback
                     = new CameraCaptureSession.CaptureCallback() {
-
                 @Override
                 public void onCaptureCompleted(@NonNull CameraCaptureSession session,
                                                @NonNull CaptureRequest request,
                                                @NonNull TotalCaptureResult result) {
                     showToast("Saved: " + mFile);
                     Log.d(this.getClass().getSimpleName(), mFile.toString());
+                    /*new AsyncTask<Void, Void, Void>() {
+                        @Override
+                        protected void onPreExecute() {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mLoadingSpinner.setVisibility(View.VISIBLE);
+                                }
+                            });
+                        }
+                        @Override
+                        protected Void doInBackground(Void... params1) {
+                            Bitmap original = BitmapFactory.decodeFile(mFile.getPath());
+                            ByteArrayOutputStream out = new ByteArrayOutputStream();
+                            original.compress(Bitmap.CompressFormat.JPEG, 10, out);
+                            Bitmap decoded = BitmapFactory.decodeStream(new ByteArrayInputStream(out.toByteArray()));
+
+                            List<PostParameter> params = new ArrayList<>();
+                            params.add(new PostParameter<>("file", mFile));
+                            MultipartPost post = new MultipartPost(params);
+                            try {
+                                Log.v(this.getClass().getSimpleName(), post.send("http://hacknsit.herokuapp.com/upload"));
+                            } catch (Exception e) {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mLoadingSpinner.setVisibility(View.INVISIBLE);
+                                    }
+                                });
+                                e.printStackTrace();
+                            }
+                            return null;
+                        }
+                        @Override
+                        protected void onPostExecute(Void paramas) {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mLoadingSpinner.setVisibility(View.VISIBLE);
+                                }
+                            });
+                        }
+                    }.execute();*/
+                    Log.v(this.getClass().getSimpleName(), "Image is now available");
                     unlockFocus();
                 }
             };
-
             mCaptureSession.stopRepeating();
             mCaptureSession.capture(captureBuilder.build(), CaptureCallback, null);
         } catch (CameraAccessException e) {
@@ -681,6 +730,8 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
                 output.write(bytes);
             } catch (IOException e) {
                 e.printStackTrace();
+                if(mLoadingSpinner.getVisibility() == View.VISIBLE)
+                    mLoadingSpinner.setVisibility(View.INVISIBLE);
             } finally {
                 mImage.close();
                 if (null != output) {
@@ -690,6 +741,48 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
                         e.printStackTrace();
                     }
                 }
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected void onPreExecute() {
+                        /*getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mLoadingSpinner.setVisibility(View.VISIBLE);
+                            }
+                        });*/
+                    }
+                    @Override
+                    protected Void doInBackground(Void... params1) {
+                        Bitmap original = BitmapFactory.decodeFile(mFile.getPath());
+                        ByteArrayOutputStream out = new ByteArrayOutputStream();
+                        original.compress(Bitmap.CompressFormat.JPEG, 10, out);
+                        Bitmap decoded = BitmapFactory.decodeStream(new ByteArrayInputStream(out.toByteArray()));
+                        List<PostParameter> params = new ArrayList<>();
+                        params.add(new PostParameter<>("file", mFile));
+                        MultipartPost post = new MultipartPost(params);
+                        try {
+                            Log.v(this.getClass().getSimpleName(), post.send("http://hacknsit.herokuapp.com/upload"));
+                        } catch (Exception e) {
+                            /*getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mLoadingSpinner.setVisibility(View.INVISIBLE);/////////
+                                }
+                            });*/
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+                    @Override
+                    protected void onPostExecute(Void paramas) {
+                        /*getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mLoadingSpinner.setVisibility(View.VISIBLE);
+                            }
+                        });*/
+                    }
+                }.execute();
             }
         }
     }
@@ -731,7 +824,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
 
     }
     public static class ConfirmationDialog extends DialogFragment {
-
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final Fragment parent = getParentFragment();

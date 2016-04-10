@@ -2,7 +2,7 @@
     <string name="app_name">HackNSIT</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
-    <string name="hint_name">Fullname</string>
+    <string name="hint_name">Full Name</string>
     <string name="btn_login">LOGIN</string>
     <string name="btn_register">REGISTER</string>
     <string name="btn_link_to_register">Not a member? Sign up now.</string>
@@ -11,7 +11,7 @@
     <string name="btn_logout">LOGOUT</string>
     <string name="name">Fullname</string>
     <string name="title_activity_login">LoginActivity</string>
-    <string name="signup_error_message">Please make sure you have entered a username, password and email address!</string>
+    <string name="signup_error_message">Please make sure you have entered a username, password and your full name!</string>
     <string name="signup_error_title">Oops!</string>
     <string name="login_error_message">Please make sure you have entered a username and password!</string>
     <string name="login_error_title">Oops!</string>
@@ -38,12 +38,6 @@
     <string name="toast_msg">Input address and press upload button.</string>
     <string name="image_uploaded">Image Uploaded.</string>
     <string name="hint_phoneNumber">Phone Number</string>
-    <string-array name="camera_choices">
-        <item>Take Picture</item>
-        <item>Take Video</item>
-        <item>Choose Picture</item>
-        <item>Choose Video</item>
-    </string-array>
     <string name="gallery">Open Gallery</string>
     <string name="camera">Open Camera</string>
     <string name="drawer_open">Open navigation drawer</string>
@@ -76,5 +70,6 @@
     <string name="calorie_tv_message">Calories in take for today -</string>
     <string name="Feed">Feed -</string>
     <string name="calories_left_for_consumption">Calories you can consume -</string>
+    <string name="hint_username">Username</string>
 
 </resources>

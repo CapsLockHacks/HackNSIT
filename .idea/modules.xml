@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/CameraModule/CameraModule.iml" filepath="$PROJECT_DIR$/CameraModule/CameraModule.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CameraModule/CameraModule.iml" filepath="$PROJECT_DIR$/CameraModule/CameraModule.iml" />
       <module fileurl="file://$PROJECT_DIR$/HackNSIT.iml" filepath="$PROJECT_DIR$/HackNSIT.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
