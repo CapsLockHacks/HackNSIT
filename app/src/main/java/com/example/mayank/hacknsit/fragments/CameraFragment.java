@@ -278,7 +278,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
     }
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
-        view.findViewById(R.id.picture).setOnClickListener(this);
+        //view.findViewById(R.id.picture).setOnClickListener(this);
         mLoadingSpinner = (SpinKitView) view.findViewById(R.id.loading);
         mLoadingSpinner.setVisibility(View.INVISIBLE);
         mLoadingSpinner.setIndeterminateDrawable(new DoubleBounce());
@@ -337,10 +337,10 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.picture: {
+            /*case R.id.picture: {
                 takePicture();
                 break;
-            }
+            }*/
             /*case R.id.dashboard: {
                 break;
             }*/

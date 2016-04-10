@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/green_400"
+    android:background="@color/light_blue_light"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="10dp" >
     <ImageView
-        android:layout_margin="10dp"
+        android:layout_margin="20dp"
         android:src="@mipmap/ic_launcher"
         android:layout_width="100dp"
         android:layout_height="100dp" />
@@ -18,13 +19,12 @@
         android:orientation="vertical"
         android:paddingLeft="20dp"
         android:paddingRight="20dp" >
-
         <EditText
             android:id="@+id/phoneNumber"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:background="@drawable/round_button"
+            android:background="@drawable/round_white"
             android:hint="@string/hint_username"
             android:padding="10dp"
             android:singleLine="true"
@@ -36,7 +36,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:background="@drawable/round_button"
+            android:background="@drawable/round_white"
             android:hint="@string/hint_password"
             android:inputType="textPassword"
             android:padding="10dp"
@@ -51,9 +51,9 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dip"
-            android:background="@drawable/round_button"
+            android:background="@drawable/round_white"
             android:text="@string/btn_login"
-            android:textColor="@color/btn_login" />
+            android:textColor="@color/dark_blue_400" />
 
         <!-- Link to Login Screen -->
 
@@ -62,10 +62,10 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dip"
-            android:background="@drawable/round_button"
+            android:background="@drawable/round_white"
             android:text="@string/btn_link_to_register"
             android:textAllCaps="false"
-            android:textColor="@color/green_400"
+            android:textColor="@color/dark_blue_400"
             android:textSize="15dp" />
 
     </LinearLayout>

@@ -74,67 +74,6 @@ public class TestFragment extends Fragment {
                 } else {
                     Intent startCustomCameraIntent = new Intent(getActivity(), CameraActivity.class);
                     startActivityForResult(startCustomCameraIntent, REQUEST_CAMERA);
-                    /*List<PostParameter> params = new ArrayList<>();
-                    File file = new File( getActivity().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "/image.jpg" );
-                    InputStream is = getActivity().getApplicationContext().getResources().openRawResource(R.raw.coke);
-                    try {
-                        OutputStream os = new FileOutputStream(file);
-                        byte buf[]=new byte[1024];
-                        int len;
-                        while((len = is.read(buf))>0)
-                            os.write(buf,0,len);
-                        os.close();
-                        is.close();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    params.add(new PostParameter<>("file", new File(file.getPath())));
-                    final MultipartPost post = new MultipartPost(params);
-                    final ProgressBar progressBar = new ProgressBar(getActivity().getApplicationContext());
-                    try {
-                        new AsyncTask<Void, Void, JSONObject>() {
-                            @Override
-                            protected void onPreExecute() {
-                                progressBar.setIndeterminateDrawable(new DoubleBounce());
-                                progressBar.setVisibility(View.VISIBLE);
-                            }
-                            @Override
-                            protected JSONObject doInBackground(Void... params) {
-                                String s = null;
-                                try {
-                                    s = post.send("http://hacknsit.herokuapp.com/upload");
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                Log.v(this.getClass().getSimpleName(), s);
-                                try {
-                                    return new JSONObject(s);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                                return null;
-                            }
-                            @Override
-                            protected void onPostExecute(JSONObject jsonObject) {
-                                JSONObject result = null;
-                                String c;
-                                try {
-                                    result = jsonObject.getJSONObject("result");
-                                    c = result.getString("nf_calories");
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                    c = "Error";
-                                }
-                                progressBar.setVisibility(View.INVISIBLE);
-                                Log.v(this.getClass().getSimpleName(), result.toString());
-                                calories.setText(c);
-                            }
-                        }.execute();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }*/
                 }
             }
         });
