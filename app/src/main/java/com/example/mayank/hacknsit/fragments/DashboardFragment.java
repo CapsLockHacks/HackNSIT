@@ -96,7 +96,6 @@ public class DashboardFragment extends android.app.Fragment {
         query.getFirstInBackground(new GetCallback<ParseUser>() {
             public void done(ParseUser user, ParseException e) {
                 if (e == null) {
-                    ParseUser p = user;
                     ArrayList<String> feedList = (ArrayList<String>) user.get("feed");
                     int size = feedList.size();
                     Log.d(TAG, "Size of feed list is " + size);
