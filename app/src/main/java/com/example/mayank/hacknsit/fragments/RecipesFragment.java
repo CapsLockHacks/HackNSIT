@@ -1,6 +1,7 @@
 package com.example.mayank.hacknsit.fragments;
 
 import android.app.Fragment;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.mayank.hacknsit.R;
 import com.parse.ParseUser;
@@ -61,6 +63,87 @@ public class RecipesFragment extends Fragment{
                 url = url + calories;
                 Log.d(TAG, "Max calories are : " + calories);
                 Log.d(TAG, "URL is : " + url);
+                new AsyncTask<Void, Void, JSONObject:angry:) {
+                    @Override
+                    protected void onPreExecute() {
+                        progressBar.setVisibility(View.VISIBLE);
+                        fab.setEnabled(false);
+                    }
+                    @Override
+                    protected JSONObject doInBackground(Void... params) {
+                        String s = null;
+                        try {
+                            s = post.send("http://hacknsit.herokuapp.com/upload");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        Log.v(this.getClass().getSimpleName(), s);
+                        try {
+                            return new JSONObject(s);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+                    @Override
+                    protected void onPostExecute(JSONObject jsonObject) {
+                        JSONObject result;
+                        final String c, d, f;
+                        try {
+                            result = jsonObject.getJSONObject("result");
+                            c = result.getString("nf_calories");
+                            d = result.getString("item_name");
+                            f = result.getString("brand_name");
+                            DialogPlus dialog = DialogPlus.newDialog(getActivity())
+                                    .setContentHolder(new ViewHolder(R.layout.dialog_content))
+                                    .setOnClickListener(new OnClickListener() {
+                                        @Override
+                                        public void onClick(final DialogPlus dialog, View view) {
+                                            switch (view.getId()) {
+                                                case R.id.save: {
+                                                    try {
+                                                        JSONObject j = new JSONObject();
+                                                        j.put("brand_name", f);
+                                                        j.put("item_name", d);
+                                                        j.put("calories", c);
+                                                        Calendar cal = Calendar.getInstance();
+                                                        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                                                        String formattedDate = sdf.format(cal.getTime());
+                                                        j.put("date", formattedDate);
+                                                        ParseUser.getCurrentUser().add("feed", j.toString());
+                                                        ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+                                                            @Override
+                                                            public void done(ParseException e) {
+                                                                Log.v(this.getClass().getSimpleName(), "Save Complete");
+                                                                prepareFeedData();
+                                                                dialog.dismiss();
+                                                            }
+                                                        });
+                                                    } catch (Exception e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                    break;
+                                                }
+                                                case R.id.cancel:
+                                                    dialog.dismiss();
+                                                    break;
+                                            }
+                                        }
+                                    })
+                                    .create();
+                            ((ImageView) dialog.getHolderView().findViewById(R.id.image)).setImageURI(Uri.parse(file.getPath()));
+                            ((TextView) dialog.getHolderView().findViewById(R.id.caloriesTv)).setText(c);
+                            ((TextView) dialog.getHolderView().findViewById(R.id.name)).setText(d);
+                            dialog.show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+//                            c = "Error";
+                        }
+                        progressBar.setVisibility(View.INVISIBLE);
+                        fab.setEnabled(true);
+                    }
+                }.execute();
+                Choose Files
 
                 URL u;
                 HttpURLConnection urlConnection = null;

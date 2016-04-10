@@ -2,6 +2,7 @@ package com.example.mayank.hacknsit.fragments;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -21,7 +22,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
@@ -37,7 +37,11 @@ import com.github.ybq.android.spinkit.style.DoubleBounce;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.OnClickListener;
 import com.orhanobut.dialogplus.ViewHolder;
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,16 +62,17 @@ public class DashboardFragment extends android.app.Fragment {
     public static DashboardFragment newInstance() {
         return new DashboardFragment();
     }
-
-    TextView profileNameTv;
-    ImageView profilePhotoIv;
-    TextView caloriesTv, name;
+    int calories = 0;
+    TextView profileNameTv ;
+    ImageView profilePhotoIv ;
+    TextView caloriesTv, name ;
     RecyclerView recyclerView;
     FoodItemAdapter foodItemAdapter;
     SpinKitView progressBar;
     List<FeedItem> feedItemList = new ArrayList<>();
-    FeedItem feedItem;
-    FloatingActionButton fab;
+    FeedItem feedItem ;
+    FloatingActionButton fab, recipe;
+    String TAG = this.getClass().getSimpleName();
     private static final int REQUEST_CAMERA = 0;
 
     @Override
@@ -104,7 +109,20 @@ public class DashboardFragment extends android.app.Fragment {
                 }
             }
         });
+        recipe = (FloatingActionButton) view.findViewById(R.id.recipe);
+        recipe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TO-DO:
+                //Add code to change to recipe fragment
+                final FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.replace(R.id.container, new RecipesFragment(), "NewFragmentTag");
+                ft.commit();
+
+            }
+        });
         foodItemAdapter = new FoodItemAdapter(feedItemList);
+        recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -185,37 +203,45 @@ public class DashboardFragment extends android.app.Fragment {
                     @Override
                     protected void onPostExecute(JSONObject jsonObject) {
                         JSONObject result;
-                        String c, d;
+                        final String c, d, f;
                         try {
                             result = jsonObject.getJSONObject("result");
                             final String ca = result.getString("nf_calories");
                             final String de = result.getString("item_name");
                             final String e = result.getString("brand_name");
+                            c = result.getString("nf_calories");
+                            d = result.getString("item_name");
+                            f = result.getString("brand_name");
                             DialogPlus dialog = DialogPlus.newDialog(getActivity())
                                     .setContentHolder(new ViewHolder(R.layout.dialog_content))
                                     .setOnClickListener(new OnClickListener() {
                                         @Override
-                                        public void onClick(DialogPlus dialog, View view) {
+                                        public void onClick(final DialogPlus dialog, View view) {
                                             switch (view.getId()) {
-                                                case R.id.save:
+                                                case R.id.save: {
                                                     try {
                                                         JSONObject j = new JSONObject();
-                                                        j.put("brand_name", e);
-                                                        j.put("item_name", de);
-                                                        j.put("calories", ca);
+                                                        j.put("brand_name", f);
+                                                        j.put("item_name", d);
+                                                        j.put("calories", c);
                                                         Calendar cal = Calendar.getInstance();
-                                                        System.out.println("Current time => " + cal.getTime());
-                                                        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
-                                                        String formattedDate = df.format(cal.getTime());
+                                                        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                                                        String formattedDate = sdf.format(cal.getTime());
                                                         j.put("date", formattedDate);
                                                         ParseUser.getCurrentUser().add("feed", j.toString());
-                                                        ParseUser.getCurrentUser().saveInBackground();
-                                                        Toast.makeText(getActivity(), "Save Button", Toast.LENGTH_LONG).show();
-                                                    } catch (JSONException e1) {
-                                                        e1.printStackTrace();
+                                                        ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+                                                            @Override
+                                                            public void done(ParseException e) {
+                                                                Log.v(this.getClass().getSimpleName(), "Save Complete");
+                                                                prepareFeedData();
+                                                                dialog.dismiss();
+                                                            }
+                                                        });
+                                                    } catch (Exception e) {
+                                                        e.printStackTrace();
                                                     }
-
                                                     break;
+                                                }
                                                 case R.id.cancel:
                                                     dialog.dismiss();
                                                     break;
@@ -229,7 +255,7 @@ public class DashboardFragment extends android.app.Fragment {
                             dialog.show();
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            c = "Error";
+//                            c = "Error";
                         }
                         progressBar.setVisibility(View.INVISIBLE);
                         fab.setEnabled(true);
@@ -243,13 +269,40 @@ public class DashboardFragment extends android.app.Fragment {
     }
 
     public void prepareFeedData() {
-        feedItem = new FeedItem("Chips", "200", "13/4/16");
-        feedItemList.add(feedItem);
-        feedItem = new FeedItem("Biscuits", "300", "13/4/16");
-        feedItemList.add(feedItem);
-        feedItem = new FeedItem("Pasta", "350", "13/4/16");
-        feedItemList.add(feedItem);
-        foodItemAdapter.notifyDataSetChanged();
+        String username = ParseUser.getCurrentUser().getUsername();
+        ParseQuery query = ParseUser.getQuery();
+        query.whereEqualTo("username", username);
+        query.getFirstInBackground(new GetCallback<ParseUser>() {
+            public void done(ParseUser user, ParseException e) {
+                if (e == null) {
+                    ArrayList<String> feedList = (ArrayList<String>) user.get("feed");
+                    int size = feedList.size();
+                    feedItemList.clear();
+                    Log.d(TAG, "Size of feed list is " + size);
+                    for (int i = 0; i < size; i++) {
+                        String json = feedList.get(i);
+                        try {
+                            JSONObject obj = new JSONObject(json);
+                            Log.d(TAG, "JSON object in string : " + obj.toString());
+                            String s = (String) obj.get("brand_name") + " - " + obj.get("item_name");
+                            String c = (String) obj.get("calories");
+                            String d = (String) obj.get("date");
+                            calories += Integer.parseInt(c);
+                            Log.d(TAG, "String s = " + s);
+                            Log.d(TAG, "String c = " + c);
+                            Log.d(TAG, "String d = " + d);
+                            feedItem = new FeedItem(s, c, d);
+                            feedItemList.add(feedItem);
+                            caloriesTv.setText(Integer.toString(calories));
+                        } catch (Throwable t) {
+                            Log.d(TAG, "Throwable : " + t);
+                        }
+                    }
+                    foodItemAdapter = new FoodItemAdapter(feedItemList);
+                    recyclerView.setAdapter(foodItemAdapter);
+                }
+            }
+        });
     }
 
     public void fillTile() {

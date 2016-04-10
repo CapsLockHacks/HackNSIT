@@ -3,36 +3,49 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusable="true"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
     android:paddingTop="10dp"
     android:paddingBottom="10dp"
     android:clickable="true"
     android:background="?android:attr/selectableItemBackground"
     android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/foodName"
-        android:textColor="@color/black"
-        android:textSize="25dp"
-        android:textStyle="bold"
-        android:layout_alignParentTop="true"
+    <android.support.v7.widget.CardView
+        android:background="@drawable/round_white"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:background="#2500b1ff"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:text="Hello"
+                android:id="@+id/foodName"
+                android:textColor="@color/dark_blue_dark"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_alignParentTop="true"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+            <TextView
+                android:id="@+id/calories"
+                android:layout_alignParentEnd="true"
+                android:textColor="@color/dark_blue_dark"
+                android:layout_below="@id/foodName"
+                android:textSize="20sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/calories"
-        android:layout_below="@id/foodName"
-        android:textSize="30dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/foodDate"
-        android:textColor="@color/black"
-        android:textSize="25dp"
-        android:layout_width="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_height="wrap_content" />
-
+            <TextView
+                android:text="name"
+                android:layout_below="@+id/foodName"
+                android:id="@+id/foodDate"
+                android:textColor="@color/dark_blue_dark"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
 </RelativeLayout>

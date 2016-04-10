@@ -18,9 +18,9 @@
         android:layout_width="wrap_content"
         android:layout_height="35dp"
         android:textSize="20sp"
-        android:layout_marginTop="30dp"
         android:id="@+id/calories_for_recipe"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignTop="@+id/calories_left_tv"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"

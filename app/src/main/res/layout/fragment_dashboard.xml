@@ -34,8 +34,6 @@
             android:textSize="20sp" />
 
     </LinearLayout>
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -43,7 +41,6 @@
         android:padding="10dp"
         android:layout_below="@id/ll1"
         android:orientation="horizontal">
-
         <TextView
             android:textColor="@android:color/white"
             android:id="@+id/calorie_counter"
@@ -63,7 +60,7 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:gravity="center"
-            android:hint="Calories"
+            android:text="Calories"
             android:textSize="20sp" />
 
     </LinearLayout>
@@ -78,6 +75,7 @@
 
         <TextView
             android:id="@+id/feed"
+            android:textColor="@android:color/white"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
@@ -93,15 +91,24 @@
         android:layout_below="@id/ll3"
         android:padding="10dp"
         android:id="@+id/ll4">
-        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <android.support.v7.widget.RecyclerView
+        <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:scrollbars="vertical"
                 android:layout_weight="1" />
+        <LinearLayout
+            android:layout_gravity="right"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/recipe"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="16dp"
+                android:src="@raw/pot" />
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/fab"
                 android:layout_width="wrap_content"
@@ -109,7 +116,7 @@
                 android:layout_gravity="bottom|end"
                 android:layout_margin="16dp"
                 android:src="@drawable/plus" />
-        </FrameLayout>
+        </LinearLayout>
     </LinearLayout>
     <com.github.ybq.android.spinkit.SpinKitView
         android:id="@+id/loading_spinner"
