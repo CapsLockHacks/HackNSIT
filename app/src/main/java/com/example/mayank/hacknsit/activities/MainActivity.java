@@ -2,6 +2,7 @@ package com.example.mayank.hacknsit.activities;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -15,6 +16,7 @@ import android.view.View;
 import com.desmond.squarecamera.CameraActivity;
 import com.example.mayank.hacknsit.R;
 import com.example.mayank.hacknsit.fragments.CameraFragment;
+import com.example.mayank.hacknsit.fragments.DashboardFragment;
 import com.example.mayank.hacknsit.fragments.TestFragment;
 import com.parse.ParseUser;
 
@@ -51,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
             Log.i(TAG, currentUser.getUsername());
         }
         setContentView(R.layout.activity_main);
-        getFragmentManager().beginTransaction().replace(R.id.container, new TestFragment()).commit();
+        getFragmentManager().beginTransaction().replace(R.id.container, new DashboardFragment()).commit();
     }
 
     private void navigateToLogin() {
