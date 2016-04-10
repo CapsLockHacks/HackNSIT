@@ -51,12 +51,12 @@
             android:layout_height="wrap_content">
 
             <EditText
-                android:id="@+id/name"
+                android:id="@+id/weight"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:background="@drawable/round_white"
-                android:hint="@string/hint_name"
+                android:hint="@string/hint_weight"
                 android:padding="10dp"
                 android:singleLine="true"
                 android:inputType="textCapWords"

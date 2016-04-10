@@ -22,7 +22,7 @@ import com.parse.SignUpCallback;
 public class SignupActivity extends Activity {
     EditText mUserName;
     EditText mPassword;
-    EditText mFullName;
+    EditText mWeight;
     Button mAlreadyRegistedButton;
     Button mSignupButton;
     String TAG = SignupActivity.class.getSimpleName();
@@ -36,10 +36,10 @@ public class SignupActivity extends Activity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_signup);
-        mUserName = (EditText) findViewById(R.id.name);
+        mUserName = (EditText) findViewById(R.id.Username);
         mPassword = (EditText) findViewById(R.id.password);
         mAlreadyRegistedButton = (Button) findViewById(R.id.btnLinkToLoginScreen);
-        mFullName = (EditText) findViewById(R.id.name);
+        mWeight = (EditText) findViewById(R.id.weight);
         mSignupButton = (Button) findViewById(R.id.verifyButton);
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
         mAlreadyRegistedButton.setOnClickListener(new View.OnClickListener() {
@@ -54,7 +54,7 @@ public class SignupActivity extends Activity {
             public void onClick(View view) {
                 username = mUserName.getText().toString();
                 password = mPassword.getText().toString();
-                name = mFullName.getText().toString();
+                name = mWeight.getText().toString();
                 username = username.trim();
                 password = password.trim();
                 name = name.trim();

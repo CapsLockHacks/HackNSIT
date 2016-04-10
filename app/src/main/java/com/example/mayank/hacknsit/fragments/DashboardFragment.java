@@ -45,7 +45,9 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -57,16 +59,17 @@ public class DashboardFragment extends android.app.Fragment {
         return new DashboardFragment();
     }
 
-    TextView profileNameTv ;
-    ImageView profilePhotoIv ;
-    TextView caloriesTv, name ;
+    TextView profileNameTv;
+    ImageView profilePhotoIv;
+    TextView caloriesTv, name;
     RecyclerView recyclerView;
     FoodItemAdapter foodItemAdapter;
     SpinKitView progressBar;
     List<FeedItem> feedItemList = new ArrayList<>();
-    FeedItem feedItem ;
+    FeedItem feedItem;
     FloatingActionButton fab;
     private static final int REQUEST_CAMERA = 0;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,10 +111,11 @@ public class DashboardFragment extends android.app.Fragment {
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(foodItemAdapter);
         fillTile();
-        prepareFeedData() ;
-        return view ;
+        prepareFeedData();
+        return view;
     }
-    public File saveBitmapToFile(File file){
+
+    public File saveBitmapToFile(File file) {
         try {
             // BitmapFactory options to downsize the image
             BitmapFactory.Options o = new BitmapFactory.Options();
@@ -123,10 +127,10 @@ public class DashboardFragment extends android.app.Fragment {
             BitmapFactory.decodeStream(inputStream, null, o);
             inputStream.close();
             // The new size we want to scale to
-            final int REQUIRED_SIZE=75;
+            final int REQUIRED_SIZE = 75;
             // Find the correct scale value. It should be the power of 2.
             int scale = 1;
-            while(o.outWidth / scale / 2 >= REQUIRED_SIZE &&
+            while (o.outWidth / scale / 2 >= REQUIRED_SIZE &&
                     o.outHeight / scale / 2 >= REQUIRED_SIZE) {
                 scale *= 2;
             }
@@ -137,12 +141,13 @@ public class DashboardFragment extends android.app.Fragment {
             inputStream.close();
             file.createNewFile();
             FileOutputStream outputStream = new FileOutputStream(file);
-            selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 100 , outputStream);
+            selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
             return file;
         } catch (Exception e) {
             return null;
         }
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != Activity.RESULT_OK) return;
@@ -159,6 +164,7 @@ public class DashboardFragment extends android.app.Fragment {
                         progressBar.setVisibility(View.VISIBLE);
                         fab.setEnabled(false);
                     }
+
                     @Override
                     protected JSONObject doInBackground(Void... params) {
                         String s = null;
@@ -175,14 +181,16 @@ public class DashboardFragment extends android.app.Fragment {
                         }
                         return null;
                     }
+
                     @Override
                     protected void onPostExecute(JSONObject jsonObject) {
                         JSONObject result;
                         String c, d;
                         try {
                             result = jsonObject.getJSONObject("result");
-                            c = result.getString("nf_calories");
-                            d = result.getString("item_name");
+                            final String ca = result.getString("nf_calories");
+                            final String de = result.getString("item_name");
+                            final String e = result.getString("brand_name");
                             DialogPlus dialog = DialogPlus.newDialog(getActivity())
                                     .setContentHolder(new ViewHolder(R.layout.dialog_content))
                                     .setOnClickListener(new OnClickListener() {
@@ -190,7 +198,23 @@ public class DashboardFragment extends android.app.Fragment {
                                         public void onClick(DialogPlus dialog, View view) {
                                             switch (view.getId()) {
                                                 case R.id.save:
-                                                    Toast.makeText(getActivity(), "Save Button", Toast.LENGTH_LONG).show();
+                                                    try {
+                                                        JSONObject j = new JSONObject();
+                                                        j.put("brand_name", e);
+                                                        j.put("item_name", de);
+                                                        j.put("calories", ca);
+                                                        Calendar cal = Calendar.getInstance();
+                                                        System.out.println("Current time => " + cal.getTime());
+                                                        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+                                                        String formattedDate = df.format(cal.getTime());
+                                                        j.put("date", formattedDate);
+                                                        ParseUser.getCurrentUser().add("feed", j.toString());
+                                                        ParseUser.getCurrentUser().saveInBackground();
+                                                        Toast.makeText(getActivity(), "Save Button", Toast.LENGTH_LONG).show();
+                                                    } catch (JSONException e1) {
+                                                        e1.printStackTrace();
+                                                    }
+
                                                     break;
                                                 case R.id.cancel:
                                                     dialog.dismiss();
@@ -200,8 +224,8 @@ public class DashboardFragment extends android.app.Fragment {
                                     })
                                     .create();
                             ((ImageView) dialog.getHolderView().findViewById(R.id.image)).setImageURI(Uri.parse(file.getPath()));
-                            ((TextView) dialog.getHolderView().findViewById(R.id.caloriesTv)).setText(c);
-                            ((TextView) dialog.getHolderView().findViewById(R.id.name)).setText(d);
+                            ((TextView) dialog.getHolderView().findViewById(R.id.caloriesTv)).setText(ca);
+                            ((TextView) dialog.getHolderView().findViewById(R.id.name)).setText(de);
                             dialog.show();
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -217,17 +241,18 @@ public class DashboardFragment extends android.app.Fragment {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
     public void prepareFeedData() {
-        feedItem = new FeedItem("Chips", "200", "13/4/16" );
+        feedItem = new FeedItem("Chips", "200", "13/4/16");
         feedItemList.add(feedItem);
-        feedItem = new FeedItem("Biscuits", "300", "13/4/16" );
+        feedItem = new FeedItem("Biscuits", "300", "13/4/16");
         feedItemList.add(feedItem);
-        feedItem = new FeedItem("Pasta", "350", "13/4/16" );
+        feedItem = new FeedItem("Pasta", "350", "13/4/16");
         feedItemList.add(feedItem);
         foodItemAdapter.notifyDataSetChanged();
     }
 
-    public void fillTile(){
+    public void fillTile() {
         final ParseUser currentUser = ParseUser.getCurrentUser();
         String name = null;
         if (currentUser != null) {
@@ -237,8 +262,8 @@ public class DashboardFragment extends android.app.Fragment {
         ColorGenerator generator = ColorGenerator.MATERIAL; // or use DEFAULT
         // generate random color
         int color = generator.getRandomColor();
-        String s = String.valueOf(name.charAt(0)) ;
-        TextDrawable drawable = TextDrawable.builder().buildRound(s ,color );
+        String s = String.valueOf(name.charAt(0));
+        TextDrawable drawable = TextDrawable.builder().buildRound(s, color);
         profilePhotoIv.setImageDrawable(drawable);
     }
 }

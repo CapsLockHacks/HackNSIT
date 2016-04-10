@@ -77,4 +77,5 @@
     <string name="Feed">Feed -</string>
     <string name="hint_username">Username</string>
     <string name="calories_left_for_consumption">Calories you can consume -</string>
+    <string name="hint_weight">Weight</string>
 </resources>
