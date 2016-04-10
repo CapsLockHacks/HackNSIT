@@ -1,6 +1,7 @@
 package com.example.mayank.hacknsit.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,16 +20,15 @@ public class FoodItemAdapter extends RecyclerView.Adapter<FoodItemAdapter.MyView
     private List<FeedItem> feedList ;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView foodName, calories, foodDate ;
-
+        public TextView foodName, calories, foodDate;
         public MyViewHolder(View view){
             super(view);
+            Log.v(this.getClass().getSimpleName(), "View Holder Constructor");
             foodName = (TextView) view.findViewById(R.id.foodName);
             calories = (TextView) view.findViewById(R.id.calories);
             foodDate = (TextView) view.findViewById(R.id.foodDate);
         }
     }
-
     public FoodItemAdapter(List<FeedItem> feedItemList) {
         this.feedList = feedItemList ;
     }
@@ -37,7 +37,6 @@ public class FoodItemAdapter extends RecyclerView.Adapter<FoodItemAdapter.MyView
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.food_list_layout, parent, false);
-
         return new MyViewHolder(itemView);
     }
 
