@@ -89,14 +89,28 @@
         android:layout_below="@id/ll3"
         android:padding="10dp"
         android:id="@+id/ll4">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view"
+        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:fab="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:scrollbars="vertical"
-            android:layout_weight="1" />
+            android:layout_height="match_parent">
 
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:scrollbars="vertical"
+                android:layout_weight="1" />
+
+            <com.melnykov.fab.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="56dp"
+                android:layout_height="40dp"
+                android:layout_gravity="bottom|right"
+                android:layout_margin="16dp"
+                android:src="@raw/fab"
+                fab:fab_colorNormal="@color/light_blue_primary"
+                fab:fab_colorPressed="@color/light_blue_dark"
+                fab:fab_colorRipple="@color/light_blue_light" />
+        </FrameLayout>
     </LinearLayout>
-
 </RelativeLayout>

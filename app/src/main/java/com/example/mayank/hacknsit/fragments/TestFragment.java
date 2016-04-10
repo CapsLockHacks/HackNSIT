@@ -132,6 +132,12 @@ public class TestFragment extends Fragment {
                 }
             }
         });
+        dashboard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getFragmentManager().beginTransaction().replace(R.id.container, DashboardFragment.newInstance()).commit();
+            }
+        });
         return view;
     }
     public File saveBitmapToFile(File file){
