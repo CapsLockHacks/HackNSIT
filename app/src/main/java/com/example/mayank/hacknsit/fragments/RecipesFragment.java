@@ -11,11 +11,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.example.mayank.hacknsit.R;
 import com.parse.ParseUser;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,13 +30,13 @@ import java.util.ArrayList;
 /**
  * Created by Mayank on 09-04-2016.
  */
-public class RecipesFragment extends Fragment{
+public class RecipesFragment extends Fragment {
 
-    ListView lv ;
+    ListView lv;
     Button recipeButton;
     EditText caloriesEt;
     String calories;
-    String username ;
+    String username;
     String keywordCalories = "calories";
     String url = "http://hacknsit.herokuapp.com/recipes/calories/";
     public static final String TAG = RecipesFragment.class.getSimpleName();
@@ -63,137 +63,76 @@ public class RecipesFragment extends Fragment{
                 url = url + calories;
                 Log.d(TAG, "Max calories are : " + calories);
                 Log.d(TAG, "URL is : " + url);
-                new AsyncTask<Void, Void, JSONObject:angry:) {
+
+                new AsyncTask<Void, Void, Void>() {
                     @Override
                     protected void onPreExecute() {
-                        progressBar.setVisibility(View.VISIBLE);
-                        fab.setEnabled(false);
+
                     }
+
                     @Override
-                    protected JSONObject doInBackground(Void... params) {
-                        String s = null;
+                    protected Void doInBackground(Void... params) {
+                        URL u;
+                        HttpURLConnection urlConnection = null;
                         try {
-                            s = post.send("http://hacknsit.herokuapp.com/upload");
+                            u = new URL(url);
+
+                            urlConnection = (HttpURLConnection) u
+                                    .openConnection();
+
+                            InputStream in = urlConnection.getInputStream();
+
+                            InputStreamReader isw = new InputStreamReader(in);
+
+                            JSONObject js = convertToJSONObject(in);
+
+                            JSONObject j1 = js;
+                            //JSONObject j = js.getJSONObject("result");
+                            ArrayList<String> arrayList = null;
+                            Log.d(TAG, j1.toString());
+                            JSONArray ja = j1.getJSONArray("result");
+                            for(int i = 0 ; i < ja.length() ; i++) {
+                                JSONObject j = ja.getJSONObject(i);
+                                String food_name = j.getString("title");
+                                String cal = j.getString("calories");
+                                String imgSrc = j.getString("image");
+                                Log.d(TAG, "Food Name is : " + food_name);
+                                Log.d(TAG, "Calories : " + calories);
+                                Log.d(TAG, "Image source is : " + imgSrc);
+                                arrayList = new ArrayList<String>();
+                                arrayList.add(food_name);
+                            }
+                            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, arrayList);
+
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    lv.setAdapter(arrayAdapter);
+                                }
+                            });
+/*
+                            int data = isw.read();
+                            while (data != -1) {
+                                char current = (char) data;
+                                data = isw.read();
+                                System.out.print(current);
+                            }*/
                         } catch (Exception e) {
                             e.printStackTrace();
+                        } finally {
+                            if (urlConnection != null) {
+                                urlConnection.disconnect();
+                            }
                         }
-                        Log.v(this.getClass().getSimpleName(), s);
-                        try {
-                            return new JSONObject(s);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+
                         return null;
                     }
-                    @Override
-                    protected void onPostExecute(JSONObject jsonObject) {
-                        JSONObject result;
-                        final String c, d, f;
-                        try {
-                            result = jsonObject.getJSONObject("result");
-                            c = result.getString("nf_calories");
-                            d = result.getString("item_name");
-                            f = result.getString("brand_name");
-                            DialogPlus dialog = DialogPlus.newDialog(getActivity())
-                                    .setContentHolder(new ViewHolder(R.layout.dialog_content))
-                                    .setOnClickListener(new OnClickListener() {
-                                        @Override
-                                        public void onClick(final DialogPlus dialog, View view) {
-                                            switch (view.getId()) {
-                                                case R.id.save: {
-                                                    try {
-                                                        JSONObject j = new JSONObject();
-                                                        j.put("brand_name", f);
-                                                        j.put("item_name", d);
-                                                        j.put("calories", c);
-                                                        Calendar cal = Calendar.getInstance();
-                                                        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-                                                        String formattedDate = sdf.format(cal.getTime());
-                                                        j.put("date", formattedDate);
-                                                        ParseUser.getCurrentUser().add("feed", j.toString());
-                                                        ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
-                                                            @Override
-                                                            public void done(ParseException e) {
-                                                                Log.v(this.getClass().getSimpleName(), "Save Complete");
-                                                                prepareFeedData();
-                                                                dialog.dismiss();
-                                                            }
-                                                        });
-                                                    } catch (Exception e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                    break;
-                                                }
-                                                case R.id.cancel:
-                                                    dialog.dismiss();
-                                                    break;
-                                            }
-                                        }
-                                    })
-                                    .create();
-                            ((ImageView) dialog.getHolderView().findViewById(R.id.image)).setImageURI(Uri.parse(file.getPath()));
-                            ((TextView) dialog.getHolderView().findViewById(R.id.caloriesTv)).setText(c);
-                            ((TextView) dialog.getHolderView().findViewById(R.id.name)).setText(d);
-                            dialog.show();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-//                            c = "Error";
-                        }
-                        progressBar.setVisibility(View.INVISIBLE);
-                        fab.setEnabled(true);
-                    }
+
                 }.execute();
-                Choose Files
-
-                URL u;
-                HttpURLConnection urlConnection = null;
-                try {
-                    u = new URL(url);
-
-                    urlConnection = (HttpURLConnection) u
-                            .openConnection();
-
-                    InputStream in = urlConnection.getInputStream();
-
-                    InputStreamReader isw = new InputStreamReader(in);
-
-                    JSONObject js = convertToJSONObject(in);
-
-                    JSONObject j = js.getJSONObject("result");
-
-                    Log.d(TAG, j.toString());
-
-                    String food_name = j.getString("title");
-                    String cal = j.getString("calories");
-                    String imgSrc = j.getString("image");
-
-                    Log.d(TAG, "Food Name is : " + food_name);
-                    Log.d(TAG, "Calories : " + calories);
-                    Log.d(TAG, "Image source is : " + imgSrc);
-
-                    ArrayList<String> arrayList = new ArrayList<String>();
-                    arrayList.add(food_name);
-                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, arrayList);
-                    lv.setAdapter(arrayAdapter);
-
-                    int data = isw.read();
-                    while (data != -1) {
-                        char current = (char) data;
-                        data = isw.read();
-                        System.out.print(current);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    if (urlConnection != null) {
-                        urlConnection.disconnect();
-                    }
-                }
             }
         });
 
         return view;
-
     }
 
     public JSONObject convertToJSONObject(InputStream inputStream) throws IOException, JSONException {
@@ -201,15 +140,15 @@ public class RecipesFragment extends Fragment{
         String line = "";
 
         StringBuilder responseStrBuilder = new StringBuilder();
-        while((line =  bR.readLine()) != null){
+        while ((line = bR.readLine()) != null) {
 
             responseStrBuilder.append(line);
         }
         inputStream.close();
 
-        JSONObject result= new JSONObject(responseStrBuilder.toString());
+        JSONObject result = new JSONObject(responseStrBuilder.toString());
 
-        return result ;
+        return result;
     }
 
 }
