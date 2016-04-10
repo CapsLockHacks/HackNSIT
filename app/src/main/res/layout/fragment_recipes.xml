@@ -33,6 +33,8 @@
         android:layout_below="@+id/calories_left_tv"
         android:layout_marginTop="20dp"
         android:layout_centerHorizontal="true"
+        android:textColor="@color/white"
+        android:background="@drawable/round_button"
         android:text="Find recipes!"
         android:textSize="20sp" />
 

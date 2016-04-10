@@ -267,7 +267,6 @@ public class DashboardFragment extends android.app.Fragment {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-
     public void prepareFeedData() {
         String username = ParseUser.getCurrentUser().getUsername();
         ParseQuery query = ParseUser.getQuery();

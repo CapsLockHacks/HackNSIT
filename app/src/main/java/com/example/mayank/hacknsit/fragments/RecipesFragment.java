@@ -63,8 +63,8 @@ public class RecipesFragment extends Fragment {
                 url = url + calories;
                 Log.d(TAG, "Max calories are : " + calories);
                 Log.d(TAG, "URL is : " + url);
-
                 new AsyncTask<Void, Void, Void>() {
+
                     @Override
                     protected void onPreExecute() {
 
@@ -91,7 +91,7 @@ public class RecipesFragment extends Fragment {
                             ArrayList<String> arrayList = null;
                             Log.d(TAG, j1.toString());
                             JSONArray ja = j1.getJSONArray("result");
-                            for(int i = 0 ; i < ja.length() ; i++) {
+                            for (int i = 0; i < ja.length(); i++) {
                                 JSONObject j = ja.getJSONObject(i);
                                 String food_name = j.getString("title");
                                 String cal = j.getString("calories");
@@ -127,8 +127,8 @@ public class RecipesFragment extends Fragment {
 
                         return null;
                     }
-
                 }.execute();
+
             }
         });
 
