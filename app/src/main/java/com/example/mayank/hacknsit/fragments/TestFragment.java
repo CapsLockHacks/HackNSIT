@@ -3,15 +3,14 @@ package com.example.mayank.hacknsit.fragments;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -27,33 +26,40 @@ import com.example.mayank.hacknsit.MultipartPost;
 import com.example.mayank.hacknsit.PostParameter;
 import com.example.mayank.hacknsit.R;
 import com.github.ybq.android.spinkit.style.DoubleBounce;
+import com.parse.ParseUser;
 
-import org.imgscalr.Scalr;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class TestFragment extends Fragment {
     Button capture, dashboard;
     TextView calories;
     private static final int REQUEST_CAMERA = 0;
+    public static final String TAG = TestFragment.class.getSimpleName();
+    String itemName ;
+    String brandName ;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.test_fragment, container, false);
         capture = (Button) view.findViewById(R.id.capture);
         dashboard = (Button) view.findViewById(R.id.dashboard);
         calories = (TextView) view.findViewById(R.id.calories);
+        dashboard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment fragment = (Fragment) DashboardFragment.newInstance();
+                FragmentManager fragmentManager = getActivity().getFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.container, fragment).addToBackStack(TAG).commit();
+            }
+        });
         capture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -220,7 +226,22 @@ public class TestFragment extends Fragment {
                         String c;
                         try {
                             result = jsonObject.getJSONObject("result");
+                            Log.d(TAG, result.toString());
                             c = result.getString("nf_calories");
+                            itemName = result.getString("item_name");
+                            brandName = result.getString("brand_name");
+                            JSONObject j = new JSONObject();
+                            j.put("brand_name", brandName);
+                            j.put("item_name", itemName);
+                            j.put("calories", c);
+                            Calendar cal = Calendar.getInstance();
+                            System.out.println("Current time => " + cal.getTime());
+                            SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+                            String formattedDate = df.format(cal.getTime());
+                            j.put("date", formattedDate);
+                            Log.d(TAG, "JSON object is : " + j.toString());
+                            ParseUser.getCurrentUser().add("feed", j.toString());
+                            ParseUser.getCurrentUser().saveInBackground();
                         } catch (JSONException e) {
                             e.printStackTrace();
                             c = "Error";
