@@ -46,6 +46,7 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -283,7 +284,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Fr
         mLoadingSpinner.setVisibility(View.INVISIBLE);
         mLoadingSpinner.setIndeterminateDrawable(new DoubleBounce());
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
-        ImageButton dashBoard = (ImageButton) view.findViewById(R.id.dashboard);
+        Button dashBoard = (Button) view.findViewById(R.id.dashboard);
         dashBoard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

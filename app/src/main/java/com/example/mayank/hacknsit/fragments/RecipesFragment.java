@@ -63,7 +63,7 @@ public class RecipesFragment extends Fragment{
                 url = url + calories;
                 Log.d(TAG, "Max calories are : " + calories);
                 Log.d(TAG, "URL is : " + url);
-                new AsyncTask<Void, Void, JSONObject:angry:) {
+                /*new AsyncTask<Void, Void, JSONObject> {
                     @Override
                     protected void onPreExecute() {
                         progressBar.setVisibility(View.VISIBLE);
@@ -144,7 +144,7 @@ public class RecipesFragment extends Fragment{
                     }
                 }.execute();
                 Choose Files
-
+*/
                 URL u;
                 HttpURLConnection urlConnection = null;
                 try {
