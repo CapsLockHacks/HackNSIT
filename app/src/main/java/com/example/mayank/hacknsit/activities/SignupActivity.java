@@ -42,7 +42,6 @@ public class SignupActivity extends Activity {
         mFullName = (EditText) findViewById(R.id.name);
         mSignupButton = (Button) findViewById(R.id.verifyButton);
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
-
         mAlreadyRegistedButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

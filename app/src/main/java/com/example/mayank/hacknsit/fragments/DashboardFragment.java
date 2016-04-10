@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +18,7 @@ import com.example.mayank.hacknsit.R;
 import com.example.mayank.hacknsit.adapter.FoodItemAdapter;
 import com.example.mayank.hacknsit.model.FeedItem;
 import com.melnykov.fab.FloatingActionButton;
-import com.parse.GetCallback;
-import com.parse.ParseException;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,9 +40,6 @@ public class DashboardFragment extends android.app.Fragment {
 
     List<FeedItem> feedItemList = new ArrayList<>();
     FeedItem feedItem ;
-
-    String username;
-    public static final String TAG = DashboardFragment.class.getSimpleName();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,7 +72,6 @@ public class DashboardFragment extends android.app.Fragment {
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(foodItemAdapter);
 
-        username = ParseUser.getCurrentUser().getUsername().toString();
 
         fillTile();
 
@@ -91,40 +81,14 @@ public class DashboardFragment extends android.app.Fragment {
     }
 
     public void prepareFeedData() {
-        ParseQuery query = ParseUser.getQuery();
-        query.whereEqualTo("username",username);
-        query.getFirstInBackground(new GetCallback<ParseUser>() {
-            public void done(ParseUser user, ParseException e) {
-                if (e == null) {
-                    ArrayList<String> feedList = (ArrayList<String>) user.get("feed");
-                    int size = feedList.size();
-                    Log.d(TAG, "Size of feed list is " + size);
+        feedItem = new FeedItem("Chips", "200", "13/4/16" );
+        feedItemList.add(feedItem);
 
-                    for (int i = 0; i < size; i++) {
-                        String json = feedList.get(i);
-                        try {
-                            JSONObject obj = new JSONObject(json);
-                            Log.d(TAG, "JSON object in string : " + obj.toString());
-                            String s = (String) obj.get("brand_name") + " - " + obj.get("item_name");
-                            String c = (String) obj.get("calories");
-                            String d = (String) obj.get("date");
-                            Log.d(TAG, "String s = " + s);
-                            Log.d(TAG, "String c = " + c);
-                            Log.d(TAG, "String d = " + d);
-                            feedItem = new FeedItem(s, c, d);
-                            feedItemList.add(feedItem);
-                            //feedItemList.notify();
-                            foodItemAdapter.notifyDataSetChanged();
-                        } catch (Throwable t) {
-                            Log.d(TAG, "Throwable : " + t);
-                        }
-                        foodItemAdapter.notifyDataSetChanged();
-                    }
+        feedItem = new FeedItem("Biscuits", "300", "13/4/16" );
+        feedItemList.add(feedItem);
 
-                    foodItemAdapter.notifyDataSetChanged();
-                }
-            }
-        });
+        feedItem = new FeedItem("Pasta", "350", "13/4/16" );
+        feedItemList.add(feedItem);
 
         foodItemAdapter.notifyDataSetChanged();
 

@@ -109,9 +109,9 @@
                 android:layout_gravity="bottom|right"
                 android:layout_margin="16dp"
                 android:src="@raw/fab"
-                fab:fab_colorNormal="@color/light_blue_primary"
-                fab:fab_colorPressed="@color/light_blue_dark"
-                fab:fab_colorRipple="@color/light_blue_light" />
+                fab:fab_colorNormal="@color/blue_500"
+                fab:fab_colorPressed="@color/"
+                fab:fab_colorRipple="@color/ripple" />
         </FrameLayout>
 
     </LinearLayout>
