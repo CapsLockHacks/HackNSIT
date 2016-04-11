@@ -1,6 +1,10 @@
 #Foodify
 
-#Objective: 
+##Demo Video on YouTube
+
+[![Foodify Youtube Video](https://img.youtube.com/vi/7d7u1zjTrcM/0.jpg)](https://www.youtube.com/watch?v=7d7u1zjTrcM)
+
+##Objective: 
 The goal of our app is to track nutritional content of what you consume with a simple snap of your food item. The app processes the image of a food item, retrieves nutritional content and also suggests recipes based on your daily calorie limit goal.
 
 ##Code Organization
