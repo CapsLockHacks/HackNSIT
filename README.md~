@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #Foodify
 
 #Objective: 
@@ -67,3 +68,4 @@ We built our core API on Flask(Python) and hosted it on Heroku. The image is sen
 3. Take photo of the food product from the app and wait for it to be processed.
 
 4. Voila.
+>>>>>>> 8f1a15f1d49be8e563b889d7a5c3c6b8e8c20c79
