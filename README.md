@@ -1,9 +1,9 @@
-#Foodify
+# Foodify
 
-#Objective: 
+# Objective: 
 The goal of our app is to track nutritional content of what you consume with a simple snap of your food item. The app processes the image of a food item, retrieves nutritional content and also suggests recipes based on your daily calorie limit goal.
 
-##Code Organization
+## Code Organization
 
 We started with a [GitHub Organization](http://github.com/CapsLockHacks/) to organize our code. We had separate repositories for our *Backend API* and *Android App*. We have utilized Github efficiently as our VCS by creating branches and set up a webhook to Heroku to automatically deploy new builds whenever new code is pushed.
 
@@ -30,17 +30,18 @@ We built our core API on Flask(Python) and hosted it on Heroku. The image is sen
 3. Take photo of the food product from the app and wait for it to be processed.
 
 4. Voila.
-=======
-#Foodify
 
-##Demo Video on YouTube
+
+# Foodify
+
+## Demo Video on YouTube
 
 [![Foodify Youtube Video](https://img.youtube.com/vi/7d7u1zjTrcM/0.jpg)](https://www.youtube.com/watch?v=7d7u1zjTrcM)
 
-##Objective: 
+## Objective: 
 The goal of our app is to track nutritional content of what you consume with a simple snap of your food item. The app processes the image of a food item, retrieves nutritional content and also suggests recipes based on your daily calorie limit goal.
 
-##Code Organization
+## Code Organization
 
 We started with a [GitHub Organization](http://github.com/CapsLockHacks/) to organize our code. We had separate repositories for our *Backend API* and *Android App*. We have utilized Github efficiently as our VCS by creating branches and set up a webhook to Heroku to automatically deploy new builds whenever new code is pushed.
 
